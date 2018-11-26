@@ -10,7 +10,9 @@ class CGraphicsCurveView : public CView
 protected: // 仅从序列化创建
 	CGraphicsCurveView() noexcept;
 	DECLARE_DYNCREATE(CGraphicsCurveView)
-
+//属性
+public:
+	int type;
 // 特性
 public:
 	CGraphicsCurveDoc* GetDocument() const;
