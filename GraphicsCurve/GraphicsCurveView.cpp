@@ -63,14 +63,69 @@ BOOL CGraphicsCurveView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CGraphicsCurveView 绘图
 
-void CGraphicsCurveView::OnDraw(CDC* /*pDC*/)
+void CGraphicsCurveView::OnDraw(CDC* pDC)
 {
 	CGraphicsCurveDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
 	// TODO: 在此处为本机数据添加绘制代码
+	boolLButtonDown = false;
+
+	for (int i = 0; i < objList.GetSize(); i++)
+	{
+		MapObj* obj = (MapObj*)objList.GetAt(i);
+		pointPrintList.RemoveAll();
+		pointList.RemoveAll();//清空当前顶点列表，从objList中取出一个顶点集，转移到pointList中，准备重画
+		int pointsize = obj->points.GetSize();
+		for (int j = 0; j < pointsize; j++)
+		{
+			pointList.Add(obj->points.GetAt(j));
+		}
+
+		//画出原有的限制线段
+		for (int j = 0; j < pointsize; j++)
+		{
+			CPoint p1 = pointList.GetAt(j);
+			CPoint p2 = pointList.GetAt((j + 1) % pointsize);
+			if((j + 1)%pointsize!= 0)
+			{
+				DDALine(pDC, p1.x, p1.y, p2.x, p2.y, RGB(10, 10, 10));
+			}
+		}
+
+		/************************************************/
+		CPen pen, *oldpen;
+		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+		oldpen = pDC->SelectObject(&pen);
+
+		if (obj->type == 1)
+		{
+			HermiteToPoints();
+		}
+		else if (obj->type == 2)
+		{
+			BezierToPoints();
+		}
+		else if (obj->type == 3)
+		{
+			BSplineToPoints();
+		}
+
+		pDC->MoveTo(pointPrintList.GetAt(0));
+		for (int m = 1; m < pointPrintList.GetSize(); m++)
+		{
+			pDC->LineTo(pointPrintList.GetAt(m));
+		}
+		pDC->SelectObject(oldpen);
+		/************************************************/
+
+		pointPrintList.RemoveAll();
+		pointList.RemoveAll();//清空当前顶点列表，从objList中取出一个顶点集，转移到pointList中，准备重画
+
+	}
+	
+
 }
 
 
@@ -346,6 +401,21 @@ void CGraphicsCurveView::OnLButtonUp(UINT nFlags, CPoint point)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (pointList.GetSize() == N + 1)
 	{
+		boolLButtonDown = false;
+		ReleaseCapture();	//释放鼠标
+		/*************************************************************/
+		/*************************************************************/
+		//为重画存下目前的顶点
+		MapObj* obj = new MapObj();
+		obj->type = CurveType;
+		for (int i = 0; i < pointList.GetSize(); i++)
+		{
+			obj->points.Add(pointList.GetAt(i));
+		}
+		objList.Add(obj);//将此次图形的所有点保存下来
+		/*************************************************************/
+		/*************************************************************/
+
 		CClientDC pDC(this);
 		CPen pen, *oldpen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
@@ -378,8 +448,7 @@ void CGraphicsCurveView::OnLButtonUp(UINT nFlags, CPoint point)
 		pDC.SelectObject(oldpen);
 		pointList.RemoveAll();
 		pointPrintList.RemoveAll();
-		boolLButtonDown = false;
-		ReleaseCapture();	//释放鼠标
+		
 	}
 	CView::OnLButtonUp(nFlags, point);
 }

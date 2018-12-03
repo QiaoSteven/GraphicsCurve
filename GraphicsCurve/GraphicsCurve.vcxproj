@@ -189,6 +189,7 @@
     <ClInclude Include="GraphicsCurveDoc.h" />
     <ClInclude Include="GraphicsCurveView.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapObj.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="GraphicsCurveDoc.cpp" />
     <ClCompile Include="GraphicsCurveView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MapObj.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="stdafx.cpp">

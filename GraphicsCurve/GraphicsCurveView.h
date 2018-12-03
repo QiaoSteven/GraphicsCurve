@@ -5,6 +5,7 @@
 #pragma once
 #include "math.h"
 #include "stdafx.h"
+#include "MapObj.h"
 
 class CGraphicsCurveView : public CView
 {
@@ -23,6 +24,7 @@ public:
 	int nPoints;							//划分点
 	CArray<CPoint, CPoint> pointList;       //顶点列表
 	CArray<CPoint, CPoint> pointPrintList;	//画点数组
+	CObArray objList;//每画一个图形，一个Obj,链成ObjList
 //方法
 public:
 	void HermiteToPoints();					//计算hermite曲线上各点坐标值
